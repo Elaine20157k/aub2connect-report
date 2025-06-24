@@ -7,7 +7,8 @@ from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 from pptx.dml.color import RGBColor
-
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 def generate_ppt_report(excel_path, output_path, logo_path):
     df = pd.read_excel(excel_path)
 
