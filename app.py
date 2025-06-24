@@ -139,3 +139,6 @@ def generate_report(excel_path, output_path):
     footer.text_frame.text = "AuB2Connect"
 
     prs.save(output_path)
+    if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))  # ✅ 关键：监听系统端口
+    app.run(host="0.0.0.0", port=port)
