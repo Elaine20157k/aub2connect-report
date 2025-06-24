@@ -17,7 +17,7 @@ def generate_ppt_report(excel_path, output_path, logo_path):
     attendance_rate = round((checked_in / total) * 100, 2)
     job_counts = df['tile'].value_counts()
     company_counts = df['company'].value_counts()
-   no_show_df = pd.DataFrame()
+        no_show_df = pd.DataFrame()
         for i, row in enumerate(no_show_companies.values.tolist()):
         for j, cell in enumerate(row):
             table.cell(i + 1, j).text = str(cell)
