@@ -15,29 +15,33 @@ def generate_ppt_report(excel_path, output_path, logo_path):
     checked_in = df['check-in'].str.upper().value_counts().get('Y', 0)
     not_checked_in = df['check-in'].str.upper().value_counts().get('N', 0)
     attendance_rate = round((checked_in / total) * 100, 2)
-    job_counts = df['tile'].value_counts()
+
+    job_counts = df['title'].value_counts()
     company_counts = df['company'].value_counts()
-        no_show_df = pd.DataFrame()
-        for i, row in enumerate(no_show_companies.values.tolist()):
-        for j, cell in enumerate(row):
-            table.cell(i + 1, j).text = str(cell)
+    no_show_df = pd.DataFrame()
+    if 'check-in' in df.columns:
+        no_show_df = df[df['check-in'].str.upper() == 'N']
 
-    note_box = slide.shapes.add_textbox(Inches(8.7), Inches(5.0), Inches(4.6), Inches(0.7))
-    note_frame = note_box.text_frame
-    p = note_frame.add_paragraph()
-    p.text = "📌 Follow-up Recommendation:\nConsider reaching out to participants who did not attend the event. You may offer a summary or share key materials."
-    for para in note_frame.paragraphs:
-        para.font.size = Pt(10)
-        para.font.color.rgb = RGBColor(150, 75, 0)
+    prs = Presentation()
+    title_slide_layout = prs.slide_layouts[5]
+    slide = prs.slides.add_slide(title_slide_layout)
 
-    summary_box = slide.shapes.add_textbox(Inches(0.3), Inches(5.9), Inches(12.5), Inches(1.3))
-    frame = summary_box.text_frame
-    frame.text = "Summary\n"
-    p = frame.add_paragraph()
-    p.text = summary_text
-    frame.paragraphs[0].font.size = Pt(14)
-    frame.paragraphs[0].font.bold = True
-    for para in frame.paragraphs[1:]:
-        para.font.size = Pt(11)
+    left = Inches(0.5)
+    top = Inches(0.5)
+    width = Inches(2)
+    height = Inches(2)
+    slide.shapes.add_picture(logo_path, left, top, width=width, height=height)
 
-    prs.save(output_path)
+    shapes = slide.shapes
+    title_shape = shapes.title
+    title_shape.text = "Event Dashboard Summary"
+
+    txBox = slide.shapes.add_textbox(Inches(3), Inches(0.5), Inches(5), Inches(2))
+    tf = txBox.text_frame
+    tf.text = f"Total Registered: {total}\nChecked In: {checked_in}\nAttendance Rate: {attendance_rate}%\nNo-shows: {not_checked_in}"
+
+    fig, ax = plt.subplots(figsize=(3, 3))
+    labels = ['Checked In', 'Not Checked In']
+    sizes = [checked_in, not_checked_in]
+    colors = ['#f6a01a', '#f15946']
+    ax.pie(sizes
