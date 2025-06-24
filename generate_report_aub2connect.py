@@ -44,4 +44,5 @@ def generate_ppt_report(excel_path, output_path, logo_path):
     labels = ['Checked In', 'Not Checked In']
     sizes = [checked_in, not_checked_in]
     colors = ['#f6a01a', '#f15946']
-    ax.pie(sizes
+    ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+
