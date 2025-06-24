@@ -1,4 +1,5 @@
 UPLOAD_FOLDER = "uploads"
+
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -8,8 +9,7 @@ from pptx import Presentation
 from pptx.util import Inches, Pt
 from pptx.enum.shapes import MSO_AUTO_SHAPE_TYPE
 from pptx.dml.color import RGBColor
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+
 def generate_ppt_report(excel_path, output_path, logo_path):
     df = pd.read_excel(excel_path)
 
@@ -28,23 +28,33 @@ def generate_ppt_report(excel_path, output_path, logo_path):
     title_slide_layout = prs.slide_layouts[5]
     slide = prs.slides.add_slide(title_slide_layout)
 
-    left = Inches(0.5)
-    top = Inches(0.5)
-    width = Inches(2)
-    height = Inches(2)
-    slide.shapes.add_picture(logo_path, left, top, width=width, height=height)
+    # 添加 Logo
+    left = Inches(0.2)
+    top = Inches(0.2)
+    height = Inches(0.8)
+    slide.shapes.add_picture(logo_path, left, top, height=height)
 
-    shapes = slide.shapes
-    title_shape = shapes.title
-    title_shape.text = "Event Dashboard Summary"
-
-    txBox = slide.shapes.add_textbox(Inches(3), Inches(0.5), Inches(5), Inches(2))
+    # 添加文字框
+    txBox = slide.shapes.add_textbox(Inches(1), Inches(1), Inches(8), Inches(1))
     tf = txBox.text_frame
-    tf.text = f"Total Registered: {total}\nChecked In: {checked_in}\nAttendance Rate: {attendance_rate}%\nNo-shows: {not_checked_in}"
+    p = tf.paragraphs[0]
+    p.text = f"Event Dashboard Summary"
+    p.font.size = Pt(28)
+    p.font.bold = True
 
-    fig, ax = plt.subplots(figsize=(3, 3))
-    labels = ['Checked In', 'Not Checked In']
+    # 饼图
+    fig, ax = plt.subplots(figsize=(2, 2))
     sizes = [checked_in, not_checked_in]
-    colors = ['#f6a01a', '#f15946']
+    labels = ['Checked In', 'Not Checked In']
     ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+    ax.axis('equal')
+    plt.tight_layout()
+    chart_path = os.path.join("charts", "pie.png")
+    if not os.path.exists("charts"):
+        os.makedirs("charts")
+    plt.savefig(chart_path)
+    plt.close()
 
+    slide.shapes.add_picture(chart_path, Inches(1), Inches(2), height=Inches(2))
+
+    prs.save(output_path)
