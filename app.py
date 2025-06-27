@@ -31,3 +31,4 @@ def upload_file():
 @app.route('/download', methods=['GET'])
 def download_report():
     return jsonify({'message': 'Report download placeholder'})
+fix: uploads error and enable CORS
