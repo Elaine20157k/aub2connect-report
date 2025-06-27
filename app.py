@@ -3,10 +3,11 @@ from flask_cors import CORS
 import os
 
 app = Flask(__name__)
-CORS(app)  # ✅ 启用 CORS 允许前端跨域访问
+CORS(app)  # ✅ 启用跨域支持
 
 UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
@@ -24,10 +25,9 @@ def upload_file():
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(filepath)
 
-    print(f"✅ Received and saved: {file.filename}")
+    print(f"✅ File received and saved: {file.filename}")
     return jsonify({'message': 'File uploaded successfully'})
 
 @app.route('/download', methods=['GET'])
 def download_report():
-    # 你可以根据需求返回一个真实的 PDF 报告文件
-    return jsonify({'message': 'Report download not implemented yet'})
+    return jsonify({'message': 'Report download placeholder'})
